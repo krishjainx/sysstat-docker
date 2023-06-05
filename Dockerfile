@@ -1,7 +1,8 @@
 FROM opensuse/leap:latest
 MAINTAINER Krish Jain <krish.jain@rochester.edu>
 
-RUN zypper refresh --non-interactive && \
-    zypper up --non-interactive && \
-    zypper in sysstat --non-interactive  
+RUN zypper -n refresh  && \
+    zypper -n update && \
+    zypper -n install sysstat
+
 
