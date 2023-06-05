@@ -6,3 +6,4 @@ RUN zypper -n refresh  && \
     zypper -n install sysstat
 
 
+CMD ["/bin/bash"]
