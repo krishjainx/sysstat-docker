@@ -1,4 +1,4 @@
-FROM opensuse/leap:latest
+FROM opensuse/tumbleweed:latest
 MAINTAINER Krish Jain <krish.jain@rochester.edu>
 
 RUN zypper -n refresh  && \
