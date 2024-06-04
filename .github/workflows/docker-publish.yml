@@ -88,6 +88,5 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         env:
           COSIGN_EXPERIMENTAL: "true"
-        # This step uses the identity token to provision an ephemeral certificate
-        # against the sigstore community Fulcio instance.
-        run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}"
+        run: |
+          echo "ghcr.io/krishjainx/sysstat-docker:main" | xargs -I {} cosign sign {}@sha256:3220fc05fd5ace500ae5a99043274f6453a807dc680743ebe54f5f6ce26fefd7
