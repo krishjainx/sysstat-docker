@@ -1,9 +1,6 @@
-FROM opensuse/tumbleweed:latest
+FROM cgr.dev/chainguard/wolfi-base
 MAINTAINER Krish Jain <krish.jain@rochester.edu>
 
-RUN zypper -n refresh  && \
-    zypper -n update && \
-    zypper -n install sysstat
-
+RUN apk update && apk add redis
 
 CMD ["/bin/bash"]
