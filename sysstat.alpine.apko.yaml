@@ -1,8 +1,8 @@
 contents:
   # Alpine repositories (choose a fixed version for reproducibility)
   repositories:
-    - https://dl-cdn.alpinelinux.org/alpine/v3.20/main
-    - https://dl-cdn.alpinelinux.org/alpine/v3.20/community
+    - https://dl-cdn.alpinelinux.org/alpine/latest-stable/ /main
+    - https://dl-cdn.alpinelinux.org/alpine/latest-stable/ /community
   # You can omit keyring because Alpine images ship keys inside the sysroot at build time.
   packages:
     - sysstat            # provides sar, iostat, mpstat, pidstat, sadf, etc.
