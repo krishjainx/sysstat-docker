@@ -46,9 +46,11 @@ jobs:
           cosign-release: 'v2.2.4'
 
 
-      # Workaround: https://github.com/docker/build-push-action/issues/461
-      - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@1583c0f09d26c58c59d25b0eef29792b7ce99d9a
+      # Install apko for building minimal container images
+      - name: Install apko
+        run: |
+          curl -L https://github.com/chainguard-dev/apko/releases/download/v0.30.10/apko_0.30.10_linux_amd64.tar.gz | tar xz
+          sudo mv apko /usr/local/bin/
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
@@ -68,19 +70,28 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
+      # Build container image with apko
+      - name: Build with apko
         id: build-and-push
-        uses: docker/build-push-action@cb8fc7586f9ad9441b20c33e0f6e8b1b58d8b4c6
-        with:
-          context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64/v8
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+        run: |
+          # Build the image and export as tarball
+          apko build sysstat.alpine.apko.yaml ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} sysstat.tar
+          
+          # Load the image into Docker daemon
+          docker load < sysstat.tar
+          
+          # Tag with metadata tags and push if not PR
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            # Tag with all metadata tags
+            for tag in ${{ steps.meta.outputs.tags }}; do
+              docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} "$tag"
+              docker push "$tag"
+            done
+            
+            # Get digest for signing
+            DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} | cut -d'@' -f2)
+            echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+          fi
 
 
       # Sign the resulting Docker image digest except on PRs.
