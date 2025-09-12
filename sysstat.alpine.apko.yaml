@@ -1,9 +1,8 @@
 contents:
-  # Alpine repositories (choose a fixed version for reproducibility)
+  keyring:
+    - https://packages.wolfi.dev/os/wolfi-signing.rsa.pub
   repositories:
-    - https://dl-cdn.alpinelinux.org/alpine/latest-stable/ /main
-    - https://dl-cdn.alpinelinux.org/alpine/latest-stable/ /community
-  # You can omit keyring because Alpine images ship keys inside the sysroot at build time.
+    - https://packages.wolfi.dev/os
   packages:
     - sysstat            # provides sar, iostat, mpstat, pidstat, sadf, etc.
 
