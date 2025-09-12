@@ -50,7 +50,7 @@ jobs:
       - name: Install apko
         run: |
           curl -L https://github.com/chainguard-dev/apko/releases/download/v0.30.10/apko_0.30.10_linux_amd64.tar.gz | tar xz
-          sudo mv apko /usr/local/bin/
+          sudo mv apko_0.30.10_linux_amd64/apko /usr/local/bin/
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
