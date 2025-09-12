@@ -84,12 +84,12 @@ jobs:
           if [ "${{ github.event_name }}" != "pull_request" ]; then
             # Tag with all metadata tags
             for tag in ${{ steps.meta.outputs.tags }}; do
-              docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} "$tag"
+              docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}-amd64 "$tag"
               docker push "$tag"
             done
             
             # Get digest for signing
-            DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} | cut -d'@' -f2)
+            DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}-amd64 | cut -d'@' -f2)
             echo "digest=$DIGEST" >> $GITHUB_OUTPUT
           fi
 
