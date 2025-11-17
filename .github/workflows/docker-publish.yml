@@ -82,11 +82,12 @@ jobs:
           
           # Tag with metadata tags and push if not PR
           if [ "${{ github.event_name }}" != "pull_request" ]; then
-            # Tag with all metadata tags
-            for tag in ${{ steps.meta.outputs.tags }}; do
+            # Tag with all metadata tags (metadata-action outputs newline separated tags)
+            while IFS= read -r tag; do
+              [ -z "$tag" ] && continue
               docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}-amd64 "$tag"
               docker push "$tag"
-            done
+            done <<< "${{ steps.meta.outputs.tags }}"
             
             # Get digest for signing
             DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}-amd64 | cut -d'@' -f2)
